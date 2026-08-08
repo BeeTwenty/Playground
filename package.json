@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "dependencies": {
+    "@expo/vector-icons": "^15.1.1",
     "@react-native-async-storage/async-storage": "2.2.0",
     "@supabase/supabase-js": "^2.112.2",
     "expo": "~57.0.11",
@@ -22,7 +23,13 @@
     "react-native-screens": "~4.26.0"
   },
   "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "@types/node": "^26.2.0",
     "@types/react": "~19.2.2",
+    "babel-preset-expo": "^57.0.6",
+    "eslint": "^9.39.5",
+    "eslint-config-expo": "~57.0.1",
+    "jest": "~30.2.0",
     "typescript": "~6.0.3"
   },
   "scripts": {
@@ -33,6 +40,22 @@
     "test": "jest",
     "typecheck": "tsc --noEmit",
     "lint": "expo lint"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\.(ts|tsx|js|jsx)$": [
+        "babel-jest",
+        {
+          "presets": [
+            "babel-preset-expo"
+          ]
+        }
+      ]
+    },
+    "testMatch": [
+      "**/__tests__/**/*.test.ts"
+    ]
   },
   "private": true
 }

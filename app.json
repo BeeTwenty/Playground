@@ -1,0 +1,42 @@
+{
+  "expo": {
+    "name": "Lekeplass Rater",
+    "slug": "lekeplass-rater",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "lekeplassrater",
+    "userInterfaceStyle": "light",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "adaptiveIcon": {
+        "backgroundColor": "#E6F4FE",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Appen bruker posisjonen din til å vise lekeplasser i nærheten og foreslå posisjon for nye lekeplasser."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Appen trenger tilgang til bildene dine for å laste opp bilder av lekeplasser.",
+          "cameraPermission": "Appen trenger tilgang til kameraet for å ta bilder av lekeplasser."
+        }
+      ]
+    ]
+  }
+}

@@ -1,0 +1,71 @@
+# Builds an installable Android APK on GitHub's servers — no local setup
+# needed. Runs when eas.json changes (i.e. when Supabase values are filled in)
+# or when triggered manually from the Actions tab.
+# The finished APK is published under "Releases" for easy download on a phone.
+name: Build Android APK
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - eas.json
+      - .github/workflows/build-apk.yml
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # needed to publish the APK as a release
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: gradle
+
+      # The Supabase URL/key are baked into the app at build time. They live in
+      # eas.json so the same values work for both EAS and this workflow.
+      - name: Read Supabase config from eas.json
+        run: |
+          URL=$(jq -r '.build.preview.env.EXPO_PUBLIC_SUPABASE_URL' eas.json)
+          KEY=$(jq -r '.build.preview.env.EXPO_PUBLIC_SUPABASE_ANON_KEY' eas.json)
+          if [[ "$URL" == LIM-INN-* || "$KEY" == LIM-INN-* ]]; then
+            echo "::error::Fyll inn Supabase-verdiene i eas.json før bygging."
+            exit 1
+          fi
+          echo "EXPO_PUBLIC_SUPABASE_URL=$URL" >> "$GITHUB_ENV"
+          echo "EXPO_PUBLIC_SUPABASE_ANON_KEY=$KEY" >> "$GITHUB_ENV"
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Generate native Android project
+        run: npx expo prebuild -p android --no-install
+
+      - name: Build APK
+        run: cd android && ./gradlew assembleRelease --no-daemon
+
+      - name: Upload APK as workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lekeplass-rater-apk
+          path: android/app/build/outputs/apk/release/app-release.apk
+
+      # Also publish under Releases — much easier to download from a phone.
+      - name: Publish APK under Releases
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          cp android/app/build/outputs/apk/release/app-release.apk lekeplass-rater.apk
+          gh release create apk \
+            --title "Lekeplass Rater – test-APK" \
+            --notes "Nyeste APK-bygg. Last ned på telefonen og installer." \
+            --target "${{ github.ref_name }}" 2>/dev/null || true
+          gh release upload apk lekeplass-rater.apk --clobber

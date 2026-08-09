@@ -36,6 +36,35 @@ npx expo start
 Skann QR-koden med **Expo Go**-appen ([iOS](https://apps.apple.com/app/expo-go/id982107779) / [Android](https://play.google.com/store/apps/details?id=host.exp.exponent)) på telefonen.
 Kartet bruker Apple Maps på iOS og Google Maps på Android – ingen egen API-nøkkel trengs i Expo Go.
 
+## Bygg en APK (installerbar Android-app)
+
+Expo Go er raskest under utvikling, men vil du ha en ekte APK på telefonen,
+bygger du den gratis i skyen med EAS Build:
+
+1. **Google Maps-nøkkel (kun første gang):** En standalone Android-app trenger
+   egen kartnøkkel (Expo Go har sin egen innebygd, derfor virker kartet der uten).
+   - Gå til [console.cloud.google.com](https://console.cloud.google.com), lag et
+     prosjekt og aktiver **«Maps SDK for Android»** under *APIs & Services*.
+   - Lag en API-nøkkel under *Credentials* og lim den inn i `app.json` der det
+     står `LIM-INN-GOOGLE-MAPS-NOKKEL-HER`.
+   - Google krever et betalingskort på prosjektet, men gratiskvoten er romslig –
+     en hobbyapp når den aldri. Hopper du over dette steget bygger appen fint,
+     men kartflaten blir grå.
+2. **Supabase-verdier:** Lim inn de samme to verdiene som i `.env` i `eas.json`
+   (feltene `EXPO_PUBLIC_SUPABASE_URL` og `EXPO_PUBLIC_SUPABASE_ANON_KEY`).
+   `.env`-filen blir nemlig ikke med opp til byggserveren.
+3. **Bygg:**
+
+   ```bash
+   npm install -g eas-cli
+   eas login          # gratis konto på expo.dev
+   eas init           # kobler prosjektet til kontoen din (svar ja)
+   eas build -p android --profile preview
+   ```
+
+   Etter ca. 10–20 minutter får du en lenke/QR-kode til ferdig APK. Åpne den på
+   telefonen, last ned og installer (tillat «ukjente apper» hvis Android spør).
+
 ## Sjekker under utvikling
 
 ```bash

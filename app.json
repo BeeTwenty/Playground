@@ -8,9 +8,16 @@
     "scheme": "lekeplassrater",
     "userInterfaceStyle": "light",
     "ios": {
+      "bundleIdentifier": "com.beetwenty.lekeplassrater",
       "supportsTablet": true
     },
     "android": {
+      "package": "com.beetwenty.lekeplassrater",
+      "config": {
+        "googleMaps": {
+          "apiKey": "LIM-INN-GOOGLE-MAPS-NOKKEL-HER"
+        }
+      },
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/android-icon-foreground.png",

@@ -1,6 +1,6 @@
 // Image handling: compress photos on the device, upload them to Supabase
 // Storage, and build public URLs for display.
-import { ImageManipulator, SaveFormat } from 'expo-image-manipulator';
+import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 
 import { base64ToBytes } from './base64';
 import { supabase } from './supabase';
@@ -17,14 +17,11 @@ const JPEG_QUALITY = 0.8;
  * Runs entirely on the device before anything is uploaded.
  */
 export async function compressImage(uri: string): Promise<{ base64: string }> {
-  const context = ImageManipulator.manipulate(uri);
-  context.resize({ width: MAX_WIDTH }); // height auto-computed, keeps aspect ratio
-  const image = await context.renderAsync();
-  const result = await image.saveAsync({
-    compress: JPEG_QUALITY,
-    format: SaveFormat.JPEG,
-    base64: true,
-  });
+  const result = await manipulateAsync(
+    uri,
+    [{ resize: { width: MAX_WIDTH } }],
+    { compress: JPEG_QUALITY, format: SaveFormat.JPEG, base64: true }
+  );
   if (!result.base64) throw new Error('Image compression produced no data');
   return { base64: result.base64 };
 }
